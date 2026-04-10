@@ -1,4 +1,4 @@
-# PanCancerSeg Inference
+# PanCancerSeg Specialist Inference
 
 Run one cancer-specific PanCancerSeg nnUNet model on a single CT or MR NIfTI image and save a segmentation mask, slice PNG previews, and an MP4 overlay video.
 
