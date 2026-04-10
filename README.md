@@ -38,8 +38,7 @@ nnUNet_results/
 
 Input images can be named either `case.nii.gz` or `case_0000.nii.gz`; the script handles both.
 
-Canonical `--cancer_type` values are `kidney_cancer`, `liver_cancer`, `pancreatic_cancer`, and `lung_cancer`.
-Legacy aliases `kidney`, `liver`, `pancreas`, and `lung` are still accepted for backward compatibility.
+`--cancer_type` values are `kidney_cancer`, `liver_cancer`, `pancreatic_cancer`, and `lung_cancer`.
 
 Kidney cancer:
 
@@ -84,12 +83,12 @@ The output directory contains:
 
 ## Supported Cancer Types
 
-| Canonical `--cancer_type` | Legacy alias | Dataset | Window level | Window width |
+|  `--cancer_type` | Dataset | Window level | Window width |
 |---------------------------|--------------|---------|-------------:|-------------:|
-| kidney_cancer | kidney | Dataset102_Kidney | 40 | 400 |
-| liver_cancer | liver | Dataset103_Liver | 40 | 400 |
-| pancreatic_cancer | pancreas | Dataset104_Pancreas | 40 | 400 |
-| lung_cancer | lung | Dataset105_Lung | -600 | 1500 |
+| kidney_cancer | Dataset102_Kidney | 40 | 400 |
+| liver_cancer | Dataset103_Liver | 40 | 400 |
+| pancreatic_cancer | Dataset104_Pancreas | 40 | 400 |
+| lung_cancer | Dataset105_Lung | -600 | 1500 |
 
 ## Example Output
 
