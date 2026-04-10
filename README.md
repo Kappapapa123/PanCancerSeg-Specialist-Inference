@@ -84,7 +84,7 @@ The output directory contains:
 ## Supported Cancer Types
 
 |  `--cancer_type` | Dataset | Window level | Window width |
-|---------------------------|--------------|---------|-------------:|-------------:|
+|---------------------------|---------|-------------:|-------------:|
 | kidney_cancer | Dataset102_Kidney | 40 | 400 |
 | liver_cancer | Dataset103_Liver | 40 | 400 |
 | pancreatic_cancer | Dataset104_Pancreas | 40 | 400 |
