@@ -1,4 +1,4 @@
-"""Run single-case PanCancerSeg nnUNet inference and visualization."""
+"""Run single-case PanCancerSeg nnUNet CT inference and visualization."""
 
 import argparse
 import shutil
@@ -13,34 +13,45 @@ from visualize import generate_outputs
 
 
 CANCER_CONFIGS = {
-    "kidney": {
+    "kidney_cancer": {
         "dataset_id": 102,
         "dataset_name": "Dataset102_Kidney",
+        "display_name": "Kidney cancer",
         "wl": 40,
         "ww": 400,
         "color": (255, 0, 0),
     },
-    "liver": {
+    "liver_cancer": {
         "dataset_id": 103,
         "dataset_name": "Dataset103_Liver",
+        "display_name": "Liver cancer",
         "wl": 40,
         "ww": 400,
         "color": (255, 0, 0),
     },
-    "pancreas": {
+    "pancreatic_cancer": {
         "dataset_id": 104,
         "dataset_name": "Dataset104_Pancreas",
+        "display_name": "Pancreatic cancer",
         "wl": 40,
         "ww": 400,
         "color": (255, 0, 0),
     },
-    "lung": {
+    "lung_cancer": {
         "dataset_id": 105,
         "dataset_name": "Dataset105_Lung",
+        "display_name": "Lung cancer",
         "wl": -600,
         "ww": 1500,
         "color": (255, 0, 0),
     },
+}
+
+CANCER_TYPE_ALIASES = {
+    "kidney": "kidney_cancer",
+    "liver": "liver_cancer",
+    "pancreas": "pancreatic_cancer",
+    "lung": "lung_cancer",
 }
 
 TRAINER_NAME = "nnUNetTrainerWandb2000"
@@ -57,8 +68,11 @@ def parse_args():
     parser.add_argument(
         "--cancer_type",
         required=True,
-        choices=sorted(CANCER_CONFIGS),
-        help="Cancer-specific model to use",
+        help=(
+            "Cancer-specific model to use. "
+            f"Canonical values: {', '.join(sorted(CANCER_CONFIGS))}. "
+            f"Legacy aliases still accepted: {', '.join(sorted(CANCER_TYPE_ALIASES))}."
+        ),
     )
     parser.add_argument(
         "--model_dir",
@@ -66,7 +80,6 @@ def parse_args():
         help="Path to nnUNet results directory containing DatasetXXX_* folders",
     )
     parser.add_argument("--output_dir", default="./output", help="Where to save results")
-    parser.add_argument("--modality", choices=["CT", "MR"], default="CT")
     parser.add_argument("--fps", type=int, default=10, help="Video frames per second")
     parser.add_argument("--device", choices=["cuda", "cpu"], default="cuda")
     return parser.parse_args()
@@ -74,6 +87,7 @@ def parse_args():
 
 def main():
     args = parse_args()
+    args.cancer_type = normalize_cancer_type(args.cancer_type)
     input_path = Path(args.input).expanduser().resolve()
     model_dir = Path(args.model_dir).expanduser().resolve()
     output_dir = Path(args.output_dir).expanduser().resolve()
@@ -132,8 +146,7 @@ def main():
         mask_path=seg_path,
         output_dir=output_dir,
         case_name=case_id,
-        cancer_type=args.cancer_type,
-        modality=args.modality,
+        cancer_type=config["display_name"],
         wl=config["wl"],
         ww=config["ww"],
         color=config["color"],
@@ -155,6 +168,17 @@ def resolve_case_id(input_path):
     if not case_id:
         raise ValueError(f"Could not resolve a case ID from: {input_path}")
     return case_id
+
+
+def normalize_cancer_type(cancer_type):
+    cancer_type = cancer_type.strip().lower()
+    normalized = CANCER_TYPE_ALIASES.get(cancer_type, cancer_type)
+    if normalized not in CANCER_CONFIGS:
+        valid = sorted(list(CANCER_CONFIGS) + list(CANCER_TYPE_ALIASES))
+        raise ValueError(
+            f"Unsupported --cancer_type '{cancer_type}'. Valid values: {', '.join(valid)}"
+        )
+    return normalized
 
 
 def install_custom_trainer():

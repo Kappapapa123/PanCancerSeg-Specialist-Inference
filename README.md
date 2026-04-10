@@ -1,6 +1,15 @@
 # PanCancerSeg Specialist Inference
 
-Run one cancer-specific PanCancerSeg nnUNet model on a single CT or MR NIfTI image and save a segmentation mask, slice PNG previews, and an MP4 overlay video.
+Run one cancer-specific PanCancerSeg nnUNet model on a single CT NIfTI image and save a segmentation mask, slice PNG previews, and an MP4 overlay video.
+
+## Model Weights
+
+Download the trained nnUNet weights from Hugging Face: [KS987/PanCancerSeg-Specialized-weights](https://huggingface.co/KS987/PanCancerSeg-Specialized-weights)
+
+```bash
+git lfs install
+git clone https://huggingface.co/KS987/PanCancerSeg-Specialized-weights
+```
 
 ## Setup
 
@@ -29,34 +38,37 @@ nnUNet_results/
 
 Input images can be named either `case.nii.gz` or `case_0000.nii.gz`; the script handles both.
 
-Kidney:
+Canonical `--cancer_type` values are `kidney_cancer`, `liver_cancer`, `pancreatic_cancer`, and `lung_cancer`.
+Legacy aliases `kidney`, `liver`, `pancreas`, and `lung` are still accepted for backward compatibility.
+
+Kidney cancer:
 
 ```bash
-python predict.py --input /path/to/case.nii.gz --cancer_type kidney --model_dir /path/to/nnUNet_results --output_dir ./output
+python predict.py --input /path/to/case.nii.gz --cancer_type kidney_cancer --model_dir /path/to/nnUNet_results --output_dir ./output
 ```
 
-Liver:
+Liver cancer:
 
 ```bash
-python predict.py --input /path/to/case.nii.gz --cancer_type liver --model_dir /path/to/nnUNet_results --output_dir ./output
+python predict.py --input /path/to/case.nii.gz --cancer_type liver_cancer --model_dir /path/to/nnUNet_results --output_dir ./output
 ```
 
-Pancreas:
+Pancreatic cancer:
 
 ```bash
-python predict.py --input /path/to/case.nii.gz --cancer_type pancreas --model_dir /path/to/nnUNet_results --output_dir ./output
+python predict.py --input /path/to/case.nii.gz --cancer_type pancreatic_cancer --model_dir /path/to/nnUNet_results --output_dir ./output
 ```
 
-Lung:
+Lung cancer:
 
 ```bash
-python predict.py --input /path/to/case.nii.gz --cancer_type lung --model_dir /path/to/nnUNet_results --output_dir ./output
+python predict.py --input /path/to/case.nii.gz --cancer_type lung_cancer --model_dir /path/to/nnUNet_results --output_dir ./output
 ```
 
 Use CPU only when CUDA is unavailable:
 
 ```bash
-python predict.py --input /path/to/case.nii.gz --cancer_type kidney --model_dir /path/to/nnUNet_results --output_dir ./output --device cpu
+python predict.py --input /path/to/case.nii.gz --cancer_type kidney_cancer --model_dir /path/to/nnUNet_results --output_dir ./output --device cpu
 ```
 
 ## Output Files
@@ -70,30 +82,14 @@ The output directory contains:
 - `{case_id}_slice_extent75.png`: 75% through predicted z-extent preview
 - `{case_id}_overlay.mp4`: scroll-through overlay video
 
-## CT vs MR
-
-CT is the default:
-
-```bash
-python predict.py --input /path/to/case.nii.gz --cancer_type liver --model_dir /path/to/nnUNet_results --output_dir ./output --modality CT
-```
-
-For MR images, use:
-
-```bash
-python predict.py --input /path/to/case.nii.gz --cancer_type liver --model_dir /path/to/nnUNet_results --output_dir ./output --modality MR
-```
-
-MR visualization uses percentile-based naive clipping on nonzero voxels.
-
 ## Supported Cancer Types
 
-| Cancer | Dataset | Window level | Window width |
-|--------|---------|-------------:|-------------:|
-| kidney | Dataset102_Kidney | 40 | 400 |
-| liver | Dataset103_Liver | 40 | 400 |
-| pancreas | Dataset104_Pancreas | 40 | 400 |
-| lung | Dataset105_Lung | -600 | 1500 |
+| Canonical `--cancer_type` | Legacy alias | Dataset | Window level | Window width |
+|---------------------------|--------------|---------|-------------:|-------------:|
+| kidney_cancer | kidney | Dataset102_Kidney | 40 | 400 |
+| liver_cancer | liver | Dataset103_Liver | 40 | 400 |
+| pancreatic_cancer | pancreas | Dataset104_Pancreas | 40 | 400 |
+| lung_cancer | lung | Dataset105_Lung | -600 | 1500 |
 
 ## Troubleshooting
 

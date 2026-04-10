@@ -15,29 +15,13 @@ import matplotlib.pyplot as plt
 DEFAULT_OVERLAY_COLOR = (255, 0, 0)
 
 
-def preprocess_volume(volume, modality, wl, ww):
-    """Window or normalize a volume and return uint8 data in [0, 255]."""
-    modality = modality.upper()
+def preprocess_volume(volume, wl, ww):
+    """Apply CT windowing and return uint8 data in [0, 255]."""
     volume = volume.astype(np.float32, copy=False)
-
-    if modality == "CT":
-        lower_bound = wl - ww / 2
-        upper_bound = wl + ww / 2
-        clipped = np.clip(volume, lower_bound, upper_bound)
-        return _normalize_to_uint8(clipped)
-
-    if modality != "MR":
-        raise ValueError(f"Unsupported modality '{modality}'. Expected CT or MR.")
-
-    nonzero = volume[volume != 0]
-    if nonzero.size > 0:
-        lower_bound, upper_bound = np.percentile(nonzero, [0.5, 99.5])
-        clipped = np.clip(volume, lower_bound, upper_bound)
-        normalized = _normalize_to_uint8(clipped)
-        normalized[volume == 0] = 0
-        return normalized
-
-    return _normalize_to_uint8(volume)
+    lower_bound = wl - ww / 2
+    upper_bound = wl + ww / 2
+    clipped = np.clip(volume, lower_bound, upper_bound)
+    return _normalize_to_uint8(clipped)
 
 
 def overlay_mask(gray_slice, mask_slice, color=DEFAULT_OVERLAY_COLOR, alpha=0.5):
@@ -183,7 +167,6 @@ def generate_outputs(
     output_dir,
     case_name,
     cancer_type,
-    modality,
     wl,
     ww,
     color=DEFAULT_OVERLAY_COLOR,
@@ -203,7 +186,7 @@ def generate_outputs(
             "Both arrays are expected in [z, y, x] order."
         )
 
-    image_uint8 = preprocess_volume(image_vol, modality, wl, ww)
+    image_uint8 = preprocess_volume(image_vol, wl, ww)
     slice_paths = generate_slice_images(
         image_uint8,
         mask_vol,
