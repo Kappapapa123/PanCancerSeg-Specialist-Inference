@@ -1,4 +1,4 @@
-# PanCancerSeg Specialist Inference
+# PanCancerSeg Inference
 
 Run one cancer-specific PanCancerSeg nnUNet model on a single CT NIfTI image and save a segmentation mask, slice PNG previews, and an MP4 overlay video.
 
@@ -90,6 +90,10 @@ The output directory contains:
 | liver_cancer | liver | Dataset103_Liver | 40 | 400 |
 | pancreatic_cancer | pancreas | Dataset104_Pancreas | 40 | 400 |
 | lung_cancer | lung | Dataset105_Lung | -600 | 1500 |
+
+## Example Output
+
+The `example/` folder contains sample output from running the kidney cancer model on a validation case (`FLARE23Ts_0005`), including slice PNGs, an overlay video, and the segmentation mask.
 
 ## Troubleshooting
 
