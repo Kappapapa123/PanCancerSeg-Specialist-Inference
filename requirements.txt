@@ -1,0 +1,9 @@
+nnunetv2>=2.6
+torch>=2.0
+nibabel>=5.0
+numpy
+opencv-python>=4.8
+matplotlib>=3.7
+scipy
+SimpleITK>=2.3
+wandb
